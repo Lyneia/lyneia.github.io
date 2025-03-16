@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Accueil</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="./external/fontawesome-free-5.15.2-web/css/all.css" rel="stylesheet">
+	<script defer src="./external/fontawesome-free-5.15.2-web/js/all.js"></script>t>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+		crossorigin="anonymous"></script>
+
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "./external/three.js-master/build/three.module.js",
+				"three/addons/": "./external/three.js-master/jsm/",
+				"vertexShader": "./ressources/shaders/vertexShader.js",
+				"fragmentShader": "./ressources/shaders/fragmentShader.js"
+			}
+		}
+	</script>
+
+	<script type="module">
+
+		import * as THREE from 'three';
+
+		import vertexShader from 'vertexShader'
+		import fragmentShader from 'fragmentShader'
+
+		let camera, scene, renderer;
+
+		let uniforms;
+
+		init();
+
+		function init() {
+
+			const container = document.getElementById('container');
+
+			camera = new THREE.OrthographicCamera(- 1, 1, 1, - 1, 0, 1);
+
+			scene = new THREE.Scene();
+
+			const geometry = new THREE.PlaneGeometry(2, 2);
+
+			uniforms = {
+				iTime: { value: 0 },
+				iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+			};
+
+			const material = new THREE.ShaderMaterial({
+
+				uniforms: uniforms,
+				vertexShader: vertexShader,
+				fragmentShader: fragmentShader
+
+			});
+
+			const mesh = new THREE.Mesh(geometry, material);
+			scene.add(mesh);
+
+			renderer = new THREE.WebGLRenderer();
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.setAnimationLoop(animate);
+			container.appendChild(renderer.domElement);
+
+			window.addEventListener('resize', onWindowResize);
+
+			const zoomImageModalEl = document.getElementById('zoomImageModal');
+
+			zoomImageModalEl.addEventListener('show.bs.modal', function (event) {
+				document.getElementById('modalImage').src = event.relatedTarget.src;
+			});
+			if (location.hash == ''){
+				var about = document.getElementById('about');
+				about.scrollIntoView();
+			}
+		}
+
+		function onWindowResize() {
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			// Update the iResolution uniform to the new resolution
+			uniforms.iResolution.value.set(window.innerWidth, window.innerHeight, 1);
+		}
+
+		//
+
+		function animate() {
+
+			uniforms.iTime.value += 0.05;
+
+			renderer.render(scene, camera);
+
+		}
+
+	</script>
+
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			color: white;
+			margin: 0;
+			padding: 0;
+			background: black;
+			overflow-y: scroll;
+			/* Allow vertical scrolling */
+			min-height: 100vh;
+			/* Ensure body is at least as tall as the viewport */
+		}
+
+		#container {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 0;
+			/* Keeps the canvas behind other content */
+		}
+
+		/* Resume Body Styling */
+		.resume-container {
+			position: relative;
+		}
+
+		.navbar {
+			z-index: 10;
+			/* Ensure navbar stays on top */
+		}
+
+		.navbar-toggler-icon {
+			background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+		}
+
+		.transparent-black-background {
+			background-color: rgba(0, 0, 0, 0.5);
+			/* 0.5 is the transparency level, you can adjust it */
+		}
+
+		.text-justify {
+			text-align: justify;
+		}
+
+		.card {
+			background-color: transparent;
+			color: white;
+		}
+
+		.button-wrapper {
+			padding: 20px;
+		}
+
+		.buttonCustom {
+			display: inline-block;
+			font-size: 16px;
+			font-weight: bold;
+			padding: 15px;
+			margin-left: 20px;
+			margin-right: 20px;
+			word-spacing: normal;
+			letter-spacing: 5px;
+			border: 1px solid white;
+			background: transparent;
+			cursor: pointer;
+		}
+
+		.thumb {
+			cursor: pointer;
+		}
+	</style>
+</head>
+
+<body class="text-white">
+	<!-- Canvas -->
+	<div id="container"></div>
+
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand-lg sticky-top transparent-black-background">
+		<div class="container-fluid">
+			<button class="navbar-toggler ms-auto border-white" type="button" data-bs-toggle="collapse"
+				data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="mainNavbar">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item"><a class="nav-link text-white" href="#about">A propos</a></li>
+					<li class="nav-item"><a class="nav-link text-white" href="#workExp">Expériences Pro</a></li>
+					<li class="nav-item"><a class="nav-link text-white" href="#education">Formations</a></li>
+					<li class="nav-item"><a class="nav-link text-white" href="#skills">Compétences</a></li>
+					<li class="nav-item"><a class="nav-link text-white" href="#projects">Portfolio</a></li>
+					<li class="nav-item"><a class="nav-link text-white" href="#contact">Contact</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Resume Content -->
+	<div class="resume-container transparent-black-background">
+		<div class="container-fluid">
+			<div id="about" class="container m-auto pt-5">
+				<h1 class="m-auto py-4 text-center text-uppercase">A propos de moi</h1>
+				<div class="row m-auto py-4">
+					<p class="text-justify py-3">
+						Diplômé d'un titre d'ingénieur en informatique, ainsi que détenteur d'un Diplôme Universitaire
+						de Technologie, je suis toujours à l'écoute d'opportunités professionnelles. Mon attention se
+						focalise particulièrement sur le domaine de l'informatique 3D, avec un intérêt particulier pour
+						les projets élaborés avec des outils tels qu'Unity ou Unreal Engine.
+					</p>
+					<p class="text-justify py-3">
+						Vous pourrez trouver ci-dessous mes diplômes, mes différentes expériences professionnelles, mes
+						compétences
+						ainsi que les différents projets sur lesquels j'ai pu évoluer.
+						N'hésitez pas non plus à télécharger mon CV.
+					</p>
+
+				</div>
+				<div class="row m-auto d-flex justify-content-center align-items-center button-wrapper py-4">
+					<div class="buttonCustom col-auto" id="buttonDownloadCV"
+						onclick="window.open('./ressources/media/MARTIN_David_Curiculum_Vitae%20.pdf')">Télécharger mon
+						CV</div>
+				</div>
+			</div>
+
+			<div id="workExp">
+				<div class="container m-auto py-4">
+					<h1 class="mp-auto text-center text-uppercase py-4">Expériences professionnelles</h1>
+
+					<div class="container py-4">
+						<!-- timeline item 1 -->
+						<div class="row no-gutters">
+							<div class="col-sm"> <!--spacer--> </div>
+							<!-- timeline item 1 center dot -->
+							<div class="col-sm-1 text-center flex-column d-none d-sm-flex">
+								<div class="row h-50">
+									<div class="col">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+								<h5 class="m-2">
+									<span class="badge rounded-pill bg-light border">&nbsp;</span>
+								</h5>
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+							</div>
+							<!-- timeline item 1 event content -->
+							<div class="col-sm py-2">
+								<div class="card border border-white">
+									<div class="card-body">
+										<div class="float-end text-white small">Depuis Juillet 2024</div>
+										<h4 class="card-title text-white"><span>ICSIS Est,
+												Schiltigheim</span><br /><span>Ingénieur en informatique
+												(Prestataire)</span></h4>
+										<p class="pt-4 card-text">Chez Euro-Information Développements (EID) : Mise à
+											jour des Data Transfert Objects (DTO) d’une application de facturation afin
+											d’optimiser son fonctionnement. Mise en place d’un système de facturation
+											récurrente.</p>
+										<p class="card-footer ps-0">Outils & Technologies : C#, Visual Studio, Git,
+											Gitlab, DB2 (SQL), Cobol, Devbooster, RTC (IBM), Rdz (IBM)</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!--/row-->
+						<!-- timeline item 2 -->
+						<div class="row no-gutters">
+							<div class="col-sm py-2">
+								<div class="card border border-white">
+									<div class="card-body">
+										<div class="float-end text-white small">Février 2023 (6 mois)</div>
+										<h4 class="card-title text-white"><span>Transurb Simulation, Namur, Belgique
+											</span><br /><span>Ingénieur en informatique (Stage)</span></h4>
+										<p class="pt-4 card-text">Développement d’un outil de visualisation 3D temps
+											réel pour un éditeur de signaux ferroviaire. Développement d’une connexion
+											aux logiciels de simulation par le biais d’un Azure active directory.</p>
+										<p class="card-footer ps-0">Outils & Technologies : Jira, Visual Studio, SVN,
+											Unity, C#, WPF, MySQL, Azure</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-1 text-center flex-column d-none d-sm-flex">
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+								<h5 class="m-2">
+									<span class="badge rounded-pill bg-light">&nbsp;</span>
+								</h5>
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+							</div>
+							<div class="col-sm"> <!--spacer--> </div>
+						</div>
+
+						<!--/row-->
+						<!-- timeline item 3 -->
+						<div class="row no-gutters">
+							<div class="col-sm"> <!--spacer--> </div>
+							<div class="col-sm-1 text-center flex-column d-none d-sm-flex">
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+								<h5 class="m-2">
+									<span class="badge rounded-pill bg-light border">&nbsp;</span>
+								</h5>
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+							</div>
+							<div class="col-sm py-2">
+								<div class="card border border-white">
+									<div class="card-body">
+										<div class="float-end text-white small">Septembre 2021 (6 mois)</div>
+										<h4 class="card-title text-white"><span>UTBM Laboratoire NIT,
+												Belfort</span><br /><span>Assistant Ingénieur (Stage)</span></h4>
+										<p class="pt-4 card-text">Développement back-end et front-end d'une application
+											d'optimisation de planification des services de soins à domicile</p>
+										<p class="card-footer ps-0">Outils & Technologies : Jira, Visual Studio Code,
+											Git, Angular, Java, Spring boot, MySQL</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!--/row-->
+						<!-- timeline item 4 -->
+						<div class="row no-gutters">
+							<div class="col-sm py-2">
+								<div class="card border border-white">
+									<div class="card-body">
+										<div class="float-end text-white small">Juin 2020 (2 mois)</div>
+										<h4 class="card-title text-white"><span>VIALIS,
+												Colmar</span><br /><span>Stagiaire en développement informatique</span>
+										</h4>
+										<p class="pt-4 card-text">Développement d’un module d’enrichissement de données
+											spatiales pour une application web</p>
+										<p class="card-footer ps-0">Outils & Technologies : Redmine, Eclipse, Mercurial,
+											Thymeleaf, Java, Spring boot, PostgreSQL</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-1 text-center flex-column d-none d-sm-flex">
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+								<h5 class="m-2">
+									<span class="badge rounded-pill bg-light border">&nbsp;</span>
+								</h5>
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+							</div>
+							<div class="col-sm"> <!--spacer--> </div>
+						</div>
+
+						<!--/row-->
+						<!-- timeline item 3 -->
+						<div class="row no-gutters">
+							<div class="col-sm"> <!--spacer--> </div>
+							<div class="col-sm-1 text-center flex-column d-none d-sm-flex">
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+								<h5 class="m-2">
+									<span class="badge rounded-pill bg-light border">&nbsp;</span>
+								</h5>
+							</div>
+							<div class="col-sm py-2">
+								<div class="card border border-white">
+									<div class="card-body">
+										<div class="float-end text-white small">Août 2019 (1 mois)</div>
+										<h4 class="card-title text-white"><span>CRIT,
+												Colmar</span><br /><span>Intérimaire assistant technicien </span></h4>
+										<p class="pt-4 card-text">Chez Vialis : Inventaire du parc informatique,
+											classements de documents, mise à jour d’une application lourde vers une
+											application web</p>
+										<p class="card-footer ps-0">Outils & Technologies : Redmine, Eclipse, Mercurial,
+											Thymeleaf, Java, Spring boot, PostgreSQL</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="education">
+				<div class="container m-auto py-4">
+					<h1 class="mp-auto text-center text-uppercase py-4">Formations</h1>
+
+					<div class="container py-4">
+						<!--/row-->
+						<!-- timeline item 1 -->
+						<div class="row no-gutters">
+							<div class="col-sm py-2">
+								<div class="card border border-white">
+									<div class="card-body">
+										<div class="float-end text-white small">Mars 2024</div>
+										<h4 class="card-title text-white"><span>Diplôme d’Ingénieur en
+												informatique</span><br /><span>180 ECTS</span></h4>
+										<p class="pt-4 card-text">Filières Développement Logiciel, Monde Virtuel et
+											Imagerie Numérique</p>
+										<p class="card-footer ps-0">Université de Technologie de Belfort-Montbéliard,
+											Belfort, France</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-1 text-center flex-column d-none d-sm-flex">
+								<div class="row h-50"></div>
+								<h5 class="m-2">
+									<span class="badge rounded-pill bg-light">&nbsp;</span>
+								</h5>
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+							</div>
+							<div class="col-sm"> <!--spacer--> </div>
+						</div>
+
+						<!--/row-->
+						<!-- timeline item 2 -->
+						<div class="row no-gutters">
+							<div class="col-sm"> <!--spacer--> </div>
+							<div class="col-sm-1 text-center flex-column d-none d-sm-flex">
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+								<h5 class="m-2">
+									<span class="badge rounded-pill bg-light border">&nbsp;</span>
+								</h5>
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+							</div>
+							<div class="col-sm py-2">
+								<div class="card border border-white">
+									<div class="card-body">
+										<div class="float-end text-white small">Septembre 2020</div>
+										<h4 class="card-title text-white"><span>Diplôme Universitaire de Technologie
+											</span><br /><span>en informatique - 120 ECTS</span></h4>
+										<p class="pt-4 card-text">Parcours Imagerie Numérique</p>
+										<p class="card-footer ps-0">Institut Universitaire de Technologie,
+											Saint-Dié-des-Vosges, Université de Lorraine, France</p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!--/row-->
+						<!-- timeline item 3 -->
+						<div class="row no-gutters">
+							<div class="col-sm py-2">
+								<div class="card border border-white">
+									<div class="card-body">
+										<div class="float-end text-white small">Juin 2018</div>
+										<h4 class="card-title text-white"><span>Baccalauréat scientifique</span>
+										</h4>
+										<p class="pt-4 card-text">Options : informatique et sciences du numérique,
+											culture régionale</p>
+										<p class="card-footer ps-0">Lycée Blaise Pascal, Colmar, France</p>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-1 text-center flex-column d-none d-sm-flex">
+								<div class="row h-50">
+									<div class="col border-end">&nbsp;</div>
+									<div class="col">&nbsp;</div>
+								</div>
+								<h5 class="m-2">
+									<span class="badge rounded-pill bg-light border">&nbsp;</span>
+								</h5>
+							</div>
+							<div class="col-sm"> <!--spacer--> </div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<div id="skills" class="container m-auto py-5">
+				<h1 class="mp-auto text-center text-uppercase py-4">COMPETENCES</h1>
+				<h2 id="programming" class="py-4 text-start">Programmation</h2>
+				<div class="row pm-auto py-2 justify-content-start align-items-center">
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>C#</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="C# knowledge"
+									aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 80%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Java</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Java knowledge"
+									aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 70%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row pm-auto py-2 justify-content-start align-items-center">
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Angular</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Angular knowledge"
+									aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 70%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>WPF</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="WPF knowledge"
+									aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 70%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row pm-auto py-2 justify-content-start align-items-center">
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Spring Boot</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Spring Boot knowledge"
+									aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 60%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>HTML</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="HTML knowledge"
+									aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 60%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row pm-auto py-2 justify-content-start align-items-center">
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>CSS</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="CSS knowledge"
+									aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 60%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Javascript</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Javascript knowledge"
+									aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 60%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row pm-auto py-2 justify-content-start align-items-center">
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>SQL</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="SQL knowledge"
+									aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 60%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>C++</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="C++ knowledge"
+									aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 50%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row pm-auto py-2 justify-content-start align-items-center">
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Cobol</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Cobol knowledge"
+									aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 30%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<h2 class="py-4 text-end">Logiciels</h2>
+				<div class="row pm-auto py-2 justify-content-end align-items-center">
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Visual Studio</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Visual Studio knowledge"
+									aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 80%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Visual Studio Code</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar"
+									aria-label="Visual Studio Code knowledge" aria-valuenow="80" aria-valuemin="0"
+									aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 80%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row pm-auto py-2 justify-content-end align-items-center">
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Unity</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Unity knowledge"
+									aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 70%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Eclipse</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Eclipse knowledge"
+									aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 70%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row pm-auto py-2 justify-content-end align-items-center">
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Git</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Git knowledge"
+									aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 70%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Pack Office</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Office knowledge"
+									aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 70%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row pm-auto py-2 justify-content-end align-items-center">
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Mercurial</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Mercurial knowledge"
+									aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 60%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>SVN</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="SVN knowledge"
+									aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 60%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row pm-auto py-2 justify-content-end align-items-center">
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>DBeaver</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="DBeaver knowledge"
+									aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 60%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-4">
+						<div class="row">
+							<div class="col-4">
+								<span>Blender</span>
+							</div>
+							<div class="col">
+								<div class="progress bg-white" role="progressbar" aria-label="Blender knowledge"
+									aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+									<div class="progress-bar bg-primary text-white" style="width: 40%"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="projects">
+				<div class="container-fluid">
+					<div class="m-auto py-3">
+						<div class="container m-auto py-4">
+							<h1 class="mp-auto text-center text-uppercase py-4">Portfolio</h1>
+							<div class="row mp-auto container">
+								<div class="col-lg-6 justify-content-start">
+									<h2 class="mp-auto text-start">Transurb - Editeur de signal 3D</h2>
+									<p class="mp-auto mt-2 text-justify">
+										J'ai eu l'occasion d'effectuer mon stage de fin d'études d'ingénieur chez
+										Transurb
+										Simulation.
+
+										L'une des tâches majeures de ce stage a été de développer un visualisateur de
+										signal
+										ferroviaire en 3D en temps réel sans nécessité de passer directement par une
+										simulation complète
+
+										<br /><br />Outils & Technologies : Unity, WPF, C#
+									</p>
+									<p class="mp-auto mt-2 text-start">
+										<a target="_blank" href="https://simulation.transurb.com/en"
+											class="link-underline-light text-white">Voir plus</a>
+									</p>
+								</div>
+								<div class="col-lg-6">
+									<div class="row justify-content-end">
+										<div class="col-6">
+											<figure class="text-end">
+												<img src="./ressources/media/Transurb1.png" data-bs-toggle="modal"
+													data-bs-target="#zoomImageModal" class="thumb img-fluid"
+													width="60%"></img>
+												<figcaption class="text-center"></figcaption>
+											</figure>
+										</div>
+										<div class="col-6">
+											<figure class="text-end">
+												<img src="./ressources/media/Transurb2.png" data-bs-toggle="modal"
+													data-bs-target="#zoomImageModal" class="thumb img-fluid"
+													width="55%"></img>
+												<figcaption class="text-center"></figcaption>
+											</figure>
+										</div>
+									</div>
+
+								</div>
+							</div>
+
+							<div class="row mp-auto mt-5 container">
+								<div class="col-lg-6 justify-content-start">
+									<iframe width="200" height="300" src="https://www.youtube.com/embed/1M73fXqMVM4?si=PpfS8i3aY9DN8kOE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+								</div>
+								<div class="col-lg-6 justify-content-end">
+									<h2 class="mp-auto text-end">LeonAR</h2>
+									<p class="mp-auto text-justify ">
+										Le projet LeonAR est une collaboration franco-allemande entre l'Université de
+										Technologie de Belfort-Montbéliard et la Technische Universität Kaiserslautern
+										(Lehrstuhl MTS). L'objectif principal du projet est de développer une
+										application
+										mobile de réalité augmentée (RA ou AR en anglais) destinée aux étudiants, visant
+										à
+										rendre les supports pédagogiques plus interactifs.
+										Dans le cadre de ce projet, j'ai eu l'opportunité de travailler sur un outil
+										permettant de se repérer et d'être guidé au sein d'un bâtiment à l'aide de
+										l'application en AR
+										<br /><br />
+										Outils & Technologies : Unity, ARFoundation, C#
+									</p>
+								</div>
+							</div>
+
+							<div class="row mp-auto mt-5 container">
+								<div class="col-lg-6 justify-content-start">
+									<h2 class="mp-auto text-start">Guitar-LeARning</h2>
+									<p class="mp-auto mt-2 text-justify">
+										Guitar-LeARning est un projet de groupe qui s'est déroulé dans le cadre de ma
+										spécialité "Monde virtuel" à l'UTBM.
+
+										L'objectif était de créer une application permettant d'apprendre à jouer de la
+										guitare en utilisant la réalité augmentée.
+
+										Pour ma part, j'ai principalement travaillé sur l'aspect RA du projet et
+										notamment
+										la projection des cordes à jouer. Les calculs de pose ont été simplifiés à
+										l'aide de
+										la bibliothèque OpenCV
+
+
+										<br /><br />Outils & Technologies : OpenCV, C++, Visual Studio Code
+									</p>
+								</div>
+								<div class="col-lg-6">
+									<div class="row justify-content-end">
+										<div class="col">
+											<figure class="text-end">
+												<img src="./ressources/media/GuitarLearning.jpg" data-bs-toggle="modal"
+													data-bs-target="#zoomImageModal" class="thumb img-fluid"
+													width="60%"></img>
+												<figcaption class="text-center"></figcaption>
+											</figure>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row mp-auto mt-5 container">
+								<div class="col-lg-6 justify-content-start">
+									<div class="col">
+										<figure class="text-start">
+											<img src="./ressources/media/Isycare.png" data-bs-toggle="modal"
+												data-bs-target="#zoomImageModal" class="thumb img-fluid"
+												width="60%"></img>
+											<figcaption class="text-center"></figcaption>
+										</figure>
+									</div>
+								</div>
+								<div class="col-lg-6 justify-content-end">
+									<h2 class="mp-auto text-end">Site web de Isycare</h2>
+									<p class="mp-auto text-justify ">
+										Ce site a été réalisé dans le cadre d'un stage pendant ma 4ème année de
+										formation
+										d'ingénieur.
+										Même si j'ai écrit certaines parties du back-end, mon travail était
+										principalement
+										axé sur la refactorisation du front-end.
+										<br /><br />
+										Outils & Technologies : Spring boot, Angular, Javascript, CSS, Bootstrap, HTML
+									</p>
+									<p class="mp-auto mt-2 text-start">
+										<a target="_blank" href="https://www.isycare-technology.com/home"
+											class="link-underline-light text-white">Voir plus</a>
+									</p>
+								</div>
+							</div>
+
+							<div class="row mp-auto mt-5 container">
+								<div class="col-lg-6 justify-content-start">
+									<h2 class="mp-auto text-start">A Simple Spaceships War</h2>
+									<p class="mp-auto mt-2 text-justify">
+										A Simple Spaceships War est un jeu vidéo réalisé avec Unity.
+
+										Il s'agit d'un shoot them up développé pendant mon diplôme universitaire de
+										technologie.
+
+										Initialement prévu comme un jeu en 2D, j'ai choisi de le faire évoluer en 3D et
+										d'y
+										ajouter un portage mobile
+
+
+										<br /><br />Outils & Technologies : Unity, C#
+									</p>
+									<p class="mp-auto mt-2 text-start">
+										<a target="_blank" href="https://lyneia.itch.io/a-simple-spaceships-wars"
+											class="link-underline-light text-white">Voir plus</a>
+									</p>
+								</div>
+								<div class="col-lg-6">
+									<div class="row justify-content-end">
+										<div class="col">
+											<figure class="text-end">
+												<img src="./ressources/media/SpaceshipWar.png" data-bs-toggle="modal"
+													data-bs-target="#zoomImageModal" class="thumb img-fluid"
+													width="60%"></img>
+												<figcaption class="text-center"></figcaption>
+											</figure>
+										</div>
+									</div>
+
+								</div>
+							</div>
+
+							<div class="row mp-auto mt-5 container">
+								<div class="col-lg-6">
+									<div class="row justify-content-start">
+										<div class="col">
+											<figure class="text-start">
+												<img src="./ressources/media/Underwater.png" data-bs-toggle="modal"
+													data-bs-target="#zoomImageModal" class="thumb img-fluid"
+													width="60%"></img>
+												<figcaption class="text-center"></figcaption>
+											</figure>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-6 justify-content-end">
+									<h2 class="mp-auto text-end">UnderWater</h2>
+									<p class="mp-auto mt-2 text-justify">
+										UnderWater est un jeu de plateforme "die-and-retry" réalisé pour la Mini Jam 33
+										:
+										Underwater de itch.io.
+
+										C'était ma première expérience avec Unity et j'ai été co-créé avec @ThomasHerve.
+										En
+										tant que première expérience, j'ai décidé de me concentrer sur le game/level
+										design
+										pendant que T.Herve réalisait les parties techniques du jeu.
+
+										<br /><br />Outils & Technologies : Unity, C#
+									</p>
+									<p class="mp-auto mt-2 text-start">
+										<a target="_blank" href="https://thomas-herve.itch.io/underwater"
+											class="link-underline-light text-white">Voir plus</a>
+									</p>
+								</div>
+							</div>
+
+							<div class="row mp-auto mt-5 container">
+								<div class="col-lg-6 justify-content-start">
+									<h2 class="mp-auto text-start">Modélisation 3D</h2>
+									<p class="mp-auto mt-2 text-justify">
+										Il s'agit d'un projet Blender réalisé dans le cadre d'un cours de modélisation
+										3D.
+										L’objectif était de créer une salle à manger avec des meubles et de la
+										nourriture.
+										J'ai donc choisi de partir sur un style médiéval afin de ne pas rester dans un
+										style
+										moderne et ainsi apporter un peu de variété à l’ensemble des projets. Il
+										convient
+										également de mentionner que c'était ma première expérience avec un outil de
+										modélisation 3D.
+										<br /><br />Outils & Technologies : Blender
+									</p>
+								</div>
+								<div class="col-lg-6">
+									<div class="row justify-content-end">
+										<div class="col">
+											<figure class="text-end">
+												<img src="./ressources/media/Blender.png" data-bs-toggle="modal"
+													data-bs-target="#zoomImageModal" class="thumb img-fluid"
+													width="60%"></img>
+												<figcaption class="text-center"></figcaption>
+											</figure>
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="contact">
+				<div class="container-fluid">
+					<div id="contact" class="container-fluid m-auto py-4 justify-content-center align-items-center">
+						<h1 class="mp-auto text-center text-uppercase py-4">CONTACT</h1>
+						<div class="container text-center pm-auto">
+							<a class="pm-auto fa-5x" href="https://linktr.ee/lyneia" target="_blank"><svg height="5rem"
+									xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision"
+									text-rendering="geometricPrecision" image-rendering="optimizeQuality"
+									fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 417 512.238">
+									<path fill="#fff" fill-rule="nonzero"
+										d="M171.274 344.942h74.09v167.296h-74.09V344.942zM0 173.468h126.068l-89.622-85.44 49.591-50.985 85.439 87.829V0h74.086v124.872L331 37.243l49.552 50.785-89.58 85.241L417 173.268v70.502H290.252l90.183 87.63L331 381.192 208.519 258.11 86.037 381.192l-49.591-49.591 90.218-87.631H0v-70.502z" />
+								</svg></a>
+							<a class="text-white pm-auto px-1 thumb" href="https://github.com/Lyneia" target="_blank"><i
+									class="fab fa-github fa-5x"></i></a>
+							<a class="text-white pm-auto px-1 thumb" href="https://lyneia.itch.io/" target="_blank"><i
+									class="fab fa-itch-io fa-5x"></i></a>
+							<a class="text-white pm-auto px-1 thumb"
+								href="https://www.linkedin.com/in/david-martin-5a8091166/" target="_blank"><i
+									class="fab fa-linkedin fa-5x"></i></a>
+							<i id="btnMail" data-clipboard-text="dmproeic@gmail.com"
+								class="fas fa-envelope fa-5x pm-auto px-1 thumb" data-bs-toggle="tooltip"
+								data-bs-placement="top" title="Copier"></i>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+</body>
+
+<!-- Modal -->
+<div class="modal fade" id="zoomImageModal" tabindex="-1" aria-labelledby="zoomImageModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg ">
+		<div class="modal-content bg-transparent">
+			<div class="modal-header border border-0">
+				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+					aria-label="Close"></button>
+			</div>
+			<div class="modal-body text-center">
+				<div class="item"><img id="modalImage" class="img-fluid" width="100%" /></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</html>
