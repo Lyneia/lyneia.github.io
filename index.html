@@ -64,7 +64,6 @@
 			scene.add(mesh);
 
 			renderer = new THREE.WebGLRenderer();
-			renderer.setPixelRatio(window.devicePixelRatio);
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			renderer.setAnimationLoop(animate);
 			container.appendChild(renderer.domElement);
@@ -83,7 +82,6 @@
 		}
 
 		function onWindowResize() {
-
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			// Update the iResolution uniform to the new resolution
 			uniforms.iResolution.value.set(window.innerWidth, window.innerHeight, 1);
@@ -168,6 +166,7 @@
 			border: 1px solid white;
 			background: transparent;
 			cursor: pointer;
+			text-align: center;
 		}
 
 		.thumb {
@@ -223,7 +222,7 @@
 				</div>
 				<div class="row m-auto d-flex justify-content-center align-items-center button-wrapper py-4">
 					<div class="buttonCustom col-auto" id="buttonDownloadCV"
-						onclick="window.open('./ressources/media/MARTIN_David_Curiculum_Vitae%20.pdf')">Télécharger mon
+						onclick="window.open('./ressources/media/MARTIN_David_Curriculum_Vitae.pdf')">Télécharger mon
 						CV</div>
 				</div>
 			</div>
